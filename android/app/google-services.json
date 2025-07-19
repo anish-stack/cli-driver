@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "941734940774",
+    "project_id": "olyoxdriver",
+    "storage_bucket": "olyoxdriver.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941734940774:android:dbab696165c0bb79b5dda7",
+        "android_client_info": {
+          "package_name": "com.olyoxpvt.OlyoxDriverApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO4zCxYZJeJbYhWt6Up7K2p1tDVnRkdDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

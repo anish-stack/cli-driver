@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -77,9 +78,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.olyoxdriver"
+    namespace "com.olyoxpvt.OlyoxDriverApp"
     defaultConfig {
-        applicationId "com.olyoxdriver"
+        applicationId "com.olyoxpvt.OlyoxDriverApp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -91,6 +92,12 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+          release {
+            storeFile file('keystore.jks')
+            storePassword '6d1a9cd097df4da8c30a9c9aac69fd9c'
+            keyAlias 'e33c8c4f8d9f47353d9a0a5d53400b10'
+            keyPassword '74853f4a57cb2aa945195c7ebec2f40c'
         }
     }
     buildTypes {
@@ -109,8 +116,11 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-    implementation("com.facebook.react:react-android")
-
+        implementation("com.facebook.react:react-android")
+        implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+         implementation("com.google.firebase:firebase-messaging")
+         implementation ("com.google.android.gms:play-services-location:20.0.0")
+        implementation project(":react-native-fused-location")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
