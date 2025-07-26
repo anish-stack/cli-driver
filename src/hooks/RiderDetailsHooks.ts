@@ -1,81 +1,204 @@
-import { useCallback, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { setOnlineStatus } from '../../Store/slices/dutySlice';
-import { useDispatch } from "react-redux"
-const API_BASE_URL = 'https://www.appv2.olyox.com/api/v1/rider';
+import { useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../Store/store';
+import {
+    fetchUserDetails,
+    getAllDetails,
+    toggleDutyStatus,
+
+    clearToggleDutyError,
+    clearUserErrors,
+} from '../../Store/slices/userSlice';
+
+// Type definitions
+interface Partner {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    isAvailable: boolean;
+    status: 'online' | 'offline';
+    RechargeData?: {
+        expireData: string;
+        amount: number;
+        isActive: boolean;
+    };
+}
+
+interface ToggleDutyResponse {
+    isOnline: boolean;
+    lastStatusChange: string;
+    source: 'toggle';
+}
 
 export const useFetchUserDetails = () => {
-    const [userData, setUserData] = useState(null);
-    const [isOnline, setIsOnline] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const { token } = useSelector((state: any) => state.login)
-    console.log("Token from store in hook:");
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>();
+    const { token } = useSelector((state: RootState) => state.login);
+    const { userData, isOnline, loading, error } = useSelector((state: RootState) => ({
+        userData: state.user.userData,
+        isOnline: state.user.isOnline,
+        loading: state.user.loading.userDetails,
+        error: state.user.error.userDetails,
+    }));
 
-    // Authenticated request with token from SecureStore
-    const makeAuthenticatedRequest = useCallback(async (url, options = {}) => {
-
+    const fetchDetails = useCallback(async (): Promise<Partner | null> => {
         if (!token) {
-            throw new Error('No authentication token found');
+            return null;
         }
-        return axios({
-            ...options,
-            url,
-            headers: {
-                ...options.headers,
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    }, []);
 
-    // Main function to fetch user details with retry logic
-    const fetchUserDetails = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
-        const MAX_RETRIES = 3;
-        let attempt = 0;
-
-        while (attempt < MAX_RETRIES) {
-            try {
-                console.log("Attempting to fetch user details hook, try:", attempt + 1);
-                const response = await makeAuthenticatedRequest(`${API_BASE_URL}/user-details`);
-
-                if (response.data.partner) {
-                    console.log("User details fetched successfully from hook", response.data.partner);
-                    setUserData(response.data.partner);
-
-                    const isAvailable = response.data.partner.isAvailable === true;
-                    dispatch(setOnlineStatus({ isOnline: isAvailable, source: 'userFetch' }))
-                    console.log("User availability status:", isAvailable);
-                    setIsOnline(isAvailable);
-                    setLoading(false);
-                    return response.data.partner;
-                }
-
-                throw new Error('No partner data found');
-            } catch (err) {
-                attempt++;
-                console.error(`Error attempt ${attempt}:`, err?.response?.data?.message || err.message);
-
-                if (attempt >= MAX_RETRIES) {
-                    setError(err?.response?.data?.message || err.message);
-                    setLoading(false);
-                    return null;
-                }
-            }
+        try {
+            const result = await dispatch(fetchUserDetails(token)).unwrap();
+            return result;
+        } catch (error) {
+            console.error('Failed to fetch user details:', error);
+            return null;
         }
-    }, []);
-
-
+    }, [dispatch, token]);
 
     return {
         userData,
         isOnline,
         loading,
         error,
-        fetchUserDetails,
+        fetchUserDetails: fetchDetails,
+        refetch: fetchDetails,
     };
+};
+
+export const useGetAllDetails = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { token } = useSelector((state: RootState) => state.login);
+    const { allUserData, loading, error } = useSelector((state: RootState) => ({
+        allUserData: state.user.allUserData,
+        loading: state.user.loading.allDetails,
+        error: state.user.error.allDetails,
+    }));
+
+    const getAllDetailsData = useCallback(async (): Promise<void> => {
+        if (!token) {
+            return;
+        }
+
+        try {
+            await dispatch(getAllDetails(token)).unwrap();
+        } catch (error) {
+            console.error('Failed to fetch all details:', error);
+        }
+    }, [dispatch, token]);
+
+    // Auto-fetch on mount
+    useEffect(() => {
+        if (!allUserData && !loading && token) {
+            getAllDetailsData();
+        }
+    }, [getAllDetailsData, allUserData, loading, token]);
+
+    console.log("Returning all user data from hook:", allUserData);
+
+    return {
+        allUserData,
+        loading,
+        error,
+        getAllDetails: getAllDetailsData,
+        refetch: getAllDetailsData,
+    };
+};
+
+export const useToggleDutyStatus = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { token } = useSelector((state: RootState) => state.login);
+    const { loading, error } = useSelector((state: RootState) => ({
+        loading: state.user.loading.toggleDuty,
+        error: state.user.error.toggleDuty,
+    }));
+
+    const toggleStatus = useCallback(async (
+        userData: Partner,
+        currentOnlineStatus: boolean
+    ): Promise<ToggleDutyResponse | null> => {
+        if (!token) {
+            return null;
+        }
+
+        try {
+            const result = await dispatch(toggleDutyStatus({
+                token,
+                userData,
+                currentOnlineStatus
+            })).unwrap();
+            return result;
+        } catch (error) {
+            console.error('Failed to toggle duty status:', error);
+            return null;
+        }
+    }, [dispatch, token]);
+
+    const clearError = useCallback(() => {
+        dispatch(clearToggleDutyError());
+    }, [dispatch]);
+
+    return {
+        toggleDutyStatus: toggleStatus,
+        loading,
+        error,
+        clearError,
+    };
+};
+
+// Custom hook to replace useUserManagement
+export const useUserManagement = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const userDetails = useFetchUserDetails();
+    const allDetails = useGetAllDetails();
+    const dutyToggle = useToggleDutyStatus();
+
+    const refreshAllData = useCallback(async () => {
+        console.log("Refreshing all user data...");
+        await Promise.all([
+            userDetails.refetch(),
+            allDetails.refetch(),
+        ]);
+    }, [userDetails.refetch, allDetails.refetch]);
+
+    const clearAllErrors = useCallback(() => {
+        dispatch(clearUserErrors());
+    }, [dispatch]);
+
+    const isLoading = userDetails.loading || allDetails.loading || dutyToggle.loading;
+    const hasError = !!(userDetails.error || allDetails.error || dutyToggle.error);
+
+    return {
+        userDetails,
+        allDetails,
+        dutyToggle,
+        refreshAllData,
+        clearAllErrors,
+        isLoading,
+        hasError,
+    };
+};
+
+// Additional utility hooks for specific user state access
+export const useUserData = () => {
+    return useSelector((state: RootState) => state.user.userData);
+};
+
+export const useUserOnlineStatus = () => {
+    return useSelector((state: RootState) => state.user.isOnline);
+};
+
+export const useUserDutyStatus = () => {
+    return useSelector((state: RootState) => state.user.dutyStatus);
+};
+
+export const useUserLoadingState = () => {
+    return useSelector((state: RootState) => state.user.loading);
+};
+
+export const useUserErrors = () => {
+    return useSelector((state: RootState) => state.user.error);
+};
+
+export const useAllUserData = () => {
+    return useSelector((state: RootState) => state.user.allUserData);
 };

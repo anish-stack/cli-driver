@@ -7,12 +7,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { initializePersistedState, store } from './Store/store';
 import Login from './src/screens/Login/Login';
-import Splash from './src/screens/Spalsh/Splash'; 
+import Splash from './src/screens/Spalsh/Splash';
 
 import { requestUserPermission, getFCMToken } from './utility/NotificationService';
 import messaging from '@react-native-firebase/messaging';
 import AppErrorBoundary from './AppErrorBoundary';
 import Home from './src/pages/Home';
+import Earnings from './src/screens/Earnings/Earnings';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,10 +25,10 @@ export default function App() {
     return () => subscription.remove();
   }, []);
 
-  const handleAppStateChange = (nextAppState:any) => {
+  const handleAppStateChange = (nextAppState: any) => {
     if (nextAppState === 'background') {
       console.log('App is in background...');
-    
+
     }
   };
 
@@ -56,7 +57,7 @@ export default function App() {
     initialize();
   }, []);
 
-  if (!isInitialized) { 
+  if (!isInitialized) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -73,6 +74,7 @@ export default function App() {
               <Stack.Screen name="splash" options={{ headerShown: false }} component={Splash} />
               <Stack.Screen name="login" options={{ title: "Login To Driver Account" }} component={Login} />
               <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
+              <Stack.Screen name="Earnings" options={{ headerShown: false }} component={Earnings} />
             </Stack.Navigator>
           </AppErrorBoundary>
         </SafeAreaProvider>

@@ -54,7 +54,7 @@ export const verifyOtp = createAsyncThunk(
   }
 );
 
-// Helper function to load persisted state
+
 export const loadPersistedState = async (): Promise<Partial<LoginState>> => {
   try {
     const [

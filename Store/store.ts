@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import LoginSlice, { loadPersistedState, restorePersistedState } from './slices/loginSlice';
-import DutySlice, { loadPersistedDutyState, restorePersistedState as restorePersistedDutyState } from './slices/dutySlice';
+import UserSlice, { 
+  loadUserPersistedState, 
+  restoreUserPersistedState,
+  saveUserPersistedState 
+} from './slices/userSlice';
 
 export const store = configureStore({
   reducer: {
     login: LoginSlice,
-    duty: DutySlice,
+    user: UserSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -13,6 +17,18 @@ export const store = configureStore({
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
     }),
+});
+
+// Subscription to persist user state on changes
+let currentUserState: any;
+store.subscribe(() => {
+  const previousUserState = currentUserState;
+  currentUserState = store.getState().user;
+  
+  // Only persist if user state actually changed
+  if (previousUserState !== currentUserState) {
+    saveUserPersistedState(currentUserState);
+  }
 });
 
 export const initializePersistedState = async () => {
@@ -23,9 +39,9 @@ export const initializePersistedState = async () => {
     const loginPersistedState = await loadPersistedState();
     console.log("📦 Loaded login persisted state:", loginPersistedState);
     
-    // Load duty persisted state
-    const dutyPersistedState = await loadPersistedDutyState();
-    console.log("📦 Loaded duty persisted state:", dutyPersistedState);
+    // Load user persisted state
+    const userPersistedState = await loadUserPersistedState();
+    console.log("📦 Loaded user persisted state:", userPersistedState);
     
     // Restore login state
     if (Object.keys(loginPersistedState).length > 0) {
@@ -35,12 +51,12 @@ export const initializePersistedState = async () => {
       console.log("ℹ️ No login persisted state found.");
     }
     
-    // Restore duty state
-    if (Object.keys(dutyPersistedState).length > 0) {
-      store.dispatch(restorePersistedDutyState(dutyPersistedState));
-      console.log("✅ Duty persisted state restored to Redux store.");
+    // Restore user state
+    if (Object.keys(userPersistedState).length > 0) {
+      store.dispatch(restoreUserPersistedState(userPersistedState));
+      console.log("✅ User persisted state restored to Redux store.");
     } else {
-      console.log("ℹ️ No duty persisted state found.");
+      console.log("ℹ️ No user persisted state found.");
     }
     
   } catch (error) {

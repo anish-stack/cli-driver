@@ -18,7 +18,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters"
 import { useNavigation } from "@react-navigation/native"
 import { useSelector } from "react-redux"
 import { ICONS } from "../../../constant/ui"
-import { useFetchUserDetails } from "../../hooks/RiderDetailsHooks"
+import { useFetchUserDetails, useGetAllDetails } from "../../hooks/RiderDetailsHooks"
 import axios from "axios"
 
 const { width, height } = Dimensions.get("window")
@@ -36,13 +36,12 @@ export default function UberHeader({
   currentLocation = "Current Location",
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const navigation = useNavigation()
+  // const navigation = useNavigation()
   const { userData, fetchUserDetails } = useFetchUserDetails()
-  const { isAuthenticated, user } = useSelector((state: any) => state.login)
+  const { allUserData ,getAllDetails:refetch } = useGetAllDetails()
+  const { isAuthenticated} = useSelector((state: any) => state.login)
   const [address, setAddress] = useState('');
 
-
-  // Animated values
   const menuAnimation = useRef(new Animated.Value(0)).current
   const overlayOpacity = useRef(new Animated.Value(0)).current
   const menuButtonRotation = useRef(new Animated.Value(0)).current
@@ -173,6 +172,7 @@ export default function UberHeader({
 
   useEffect(() => {
     // Fetch user details when the component mounts
+    refetch()
     fetchUserDetails().catch((error) => {
       console.error("Error fetching user details:", error)
     })
@@ -263,8 +263,8 @@ export default function UberHeader({
                 )}
               </View>
               <View style={styles.userInfo}>
-                <Text style={styles.userName}>{user?.name || "Guest User"}</Text>
-                <Text style={styles.userRating}>★ 4.9</Text>
+                <Text style={styles.userName}>{userData?.name || "Guest User"}</Text>
+                <Text style={styles.userRating}>★ {allUserData?.averageRating || 0}</Text>
               </View>
             </View>
           </View>

@@ -33,6 +33,8 @@ export default function OlyoxTabBar({
   toggle,
   onLocationPress,
 }: OlyoxTabBarProps) {
+  
+
   const handleTabPress = (tabId: string, route: string) => {
     console.log("Tab pressed:", tabId, route)
     onTabPress?.(tabId, route)
@@ -52,6 +54,7 @@ export default function OlyoxTabBar({
         activeTab={activeTab}
         isDriverMode={isDriverMode}
         activeRide={activeRide}
+        isOnline={isDriverMode}
         onToggleStatus={toggle}
         onTabPress={handleTabPress}
       />
