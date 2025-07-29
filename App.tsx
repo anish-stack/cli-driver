@@ -14,6 +14,7 @@ import messaging from '@react-native-firebase/messaging';
 import AppErrorBoundary from './AppErrorBoundary';
 import Home from './src/pages/Home';
 import Earnings from './src/screens/Earnings/Earnings';
+import Profile from './src/screens/Profile/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +76,7 @@ export default function App() {
               <Stack.Screen name="login" options={{ title: "Login To Driver Account" }} component={Login} />
               <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
               <Stack.Screen name="Earnings" options={{ headerShown: false }} component={Earnings} />
+              <Stack.Screen name="Profile" options={{ headerShown: false }} component={Profile} />
             </Stack.Navigator>
           </AppErrorBoundary>
         </SafeAreaProvider>

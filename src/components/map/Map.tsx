@@ -407,15 +407,15 @@ const Map = memo(
           style={styles.map}
           customMapStyle={mapStyle}
           region={mapRegion}
-          showsUserLocation={false}
-          showsMyLocationButton={false}
-          showsCompass={false}
-          showsScale={false}
-          showsBuildings={false}
-          showsTraffic={false}
-          showsIndoors={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+          showsCompass={true}
+          showsScale={true}
+          showsBuildings={true}
+       
+          showsIndoors={true}
+          rotateEnabled={true}
+          pitchEnabled={true}
         >
           {/* Search Circle - Show when searching for rides */}
           {shouldShowSearchCircle && (

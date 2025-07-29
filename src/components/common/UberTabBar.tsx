@@ -11,6 +11,7 @@ interface OlyoxTabBarProps {
   children: React.ReactNode
   currentLocation?: string
   isDriverMode?: boolean
+  isBottomShow?: boolean
   activeTab?: string
   activeRide?: {
     isActive: boolean
@@ -25,6 +26,7 @@ interface OlyoxTabBarProps {
 
 export default function OlyoxTabBar({
   children,
+  isBottomShow = true,
   currentLocation = "Current Location",
   isDriverMode = false,
   activeTab = "home",
@@ -33,32 +35,35 @@ export default function OlyoxTabBar({
   toggle,
   onLocationPress,
 }: OlyoxTabBarProps) {
-  
+
 
   const handleTabPress = (tabId: string, route: string) => {
-    console.log("Tab pressed:", tabId, route)
+ 
     onTabPress?.(tabId, route)
   }
 
   return (
     <SafeAreaView style={styles.container}>
-    <View style={styles.container}>
+      <View style={styles.container}>
 
-      <UberHeader currentLocation={currentLocation} onLocationPress={onLocationPress} />
+        <UberHeader currentLocation={currentLocation} onLocationPress={onLocationPress} />
 
 
-      <View style={styles.content}>{children}</View>
+        <View style={styles.content}>{children}</View>
 
- 
-      <UberBottom
-        activeTab={activeTab}
-        isDriverMode={isDriverMode}
-        activeRide={activeRide}
-        isOnline={isDriverMode}
-        onToggleStatus={toggle}
-        onTabPress={handleTabPress}
-      />
-    </View>
+
+        <UberBottom
+          activeTab={activeTab}
+          isDutyToggleShow={isBottomShow}
+          isDriverMode={isDriverMode}
+          activeRide={activeRide}
+          isOnline={isDriverMode}
+          onToggleStatus={toggle}
+          onTabPress={handleTabPress}
+        />
+
+
+      </View>
     </SafeAreaView>
   )
 }
@@ -66,7 +71,7 @@ export default function OlyoxTabBar({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
+
   },
   content: {
     flex: 1,

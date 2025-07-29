@@ -173,6 +173,7 @@ export const getAllDetails = createAsyncThunk(
         }
     }
 );
+// i am toogle duty status
 
 export const toggleDutyStatus = createAsyncThunk(
     'user/toggleDutyStatus',

@@ -354,6 +354,7 @@ const RideIndicator = React.memo(() => {
 export default function BottomTabs({
   activeTab = "home",
   onTabPress,
+  isDutyToggleShow=true,
   currentRide,
   earnings = 0,
 }: BottomTabsProps) {
@@ -443,7 +444,9 @@ export default function BottomTabs({
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {/* Header Section */}
-      <View style={styles.header}>
+
+      {isDutyToggleShow ? (
+          <View style={styles.header}>
         <EarningsCard earnings={earnings} />
         <DutyToggle
           isOnline={isOnline}
@@ -452,6 +455,8 @@ export default function BottomTabs({
           userData={userData}
         />
       </View>
+      ):null}
+    
 
       {/* Ride Indicator */}
       {currentRide && <RideIndicator />}

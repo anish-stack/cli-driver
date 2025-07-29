@@ -137,30 +137,31 @@ export default function UberHeader({
   }
 
 
-  const fetchLocationAddress = useCallback(async () => {
-    if (!currentLocation?.latitude || !currentLocation?.longitude) {
-      console.warn("Coordinates missing");
+const fetchLocationAddress = useCallback(async () => {
+  try {
+    const latitude = currentLocation?.latitude ?? allUserData?.location?.[1];
+    const longitude = currentLocation?.longitude ?? allUserData?.location?.[0];
+
+    if (!latitude || !longitude) {
+      setAddress("Location not available");
       return;
     }
 
-    console.log("Current location in header:", `${currentLocation.latitude}, ${currentLocation.longitude}`);
+    const response = await axios.post(`https://www.appv2.olyox.com/Fetch-Current-Location`, {
+      lat: latitude,
+      lng: longitude,
+    });
 
-    try {
-      const { data } = await axios.post(`https://www.appv2.olyox.com/Fetch-Current-Location`, {
-        lat: currentLocation.latitude,
-        lng: currentLocation.longitude,
-      });
+    const fetchedAddress = response?.data?.data?.address;
 
-      if (data?.data?.address) {
-        setAddress(data.data.address);
-      } else {
-        setAddress(`${currentLocation.latitude}, ${currentLocation.longitude}`);
-      }
-    } catch (error) {
-      console.error("Error fetching address:", error);
-      setAddress(`${currentLocation.latitude}, ${currentLocation.longitude}`);
-    }
-  }, [currentLocation]);
+    setAddress(fetchedAddress || `${latitude}, ${longitude}`);
+  } catch (error) {
+    console.error("Failed to fetch address:", error);
+    const fallbackLat = currentLocation?.latitude ?? "Unknown";
+    const fallbackLng = currentLocation?.longitude ?? "Unknown";
+    setAddress(`${fallbackLat}, ${fallbackLng}`);
+  }
+}, [currentLocation, allUserData]);
 
   useEffect(() => {
     if (currentLocation) {
