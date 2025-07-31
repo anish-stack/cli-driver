@@ -93,7 +93,6 @@ export const useGetAllDetails = () => {
         }
     }, [getAllDetailsData, allUserData, loading, token]);
 
-    console.log("Returning all user data from hook:", allUserData);
 
     return {
         allUserData,

@@ -68,5 +68,13 @@
             android:enabled="true"
             android:exported="false" />
 
+            <service
+            android:name=".RidePollingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+            <receiver android:name=".RideActionReceiver" android:exported="false" />
+
     </application>
 </manifest>

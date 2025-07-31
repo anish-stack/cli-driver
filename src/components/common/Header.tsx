@@ -172,7 +172,7 @@ const fetchLocationAddress = useCallback(async () => {
 
 
   useEffect(() => {
-    // Fetch user details when the component mounts
+   
     refetch()
     fetchUserDetails().catch((error) => {
       console.error("Error fetching user details:", error)

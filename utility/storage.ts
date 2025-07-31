@@ -5,7 +5,7 @@ export const saveData = async (key: string, value: any): Promise<void> => {
   try {
     const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
     await AsyncStorage.setItem(key, stringValue);
-    console.log(`✅ Data saved: ${key}`);
+
   } catch (error) {
     console.error(`❌ Error saving data to AsyncStorage for key "${key}":`, error);
   }

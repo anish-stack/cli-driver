@@ -10,6 +10,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.olyoxpvt.OlyoxDriverApp.FloatingWidgetPackage
+import com.olyoxpvt.OlyoxDriverApp.RideServiceBridgePackage
 import com.olyoxpvt.OlyoxDriverApp.LocationPackage
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 import com.mustansirzia.fused.FusedLocationPackage;
@@ -26,6 +27,7 @@ class MainApplication : Application(), ReactApplication {
         packages.add(ReactNativeFirebaseMessagingPackage())
         packages.add(FusedLocationPackage())
         packages.add(LocationPackage())
+        packages.add(RideServiceBridgePackage())
 
         return packages
       }

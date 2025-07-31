@@ -423,7 +423,10 @@ export default function BottomTabs({
       const result = await dutyToggle.toggleDutyStatus(userData, isOnline)
       if (!result) {
         Alert.alert("Error", "Failed to toggle duty status. Please try again.")
+      }else{
+        refreshAllData()
       }
+      refreshAllData()
     } catch (error) {
       console.error("Error toggling duty status:", error)
       Alert.alert("Error", "An error occurred while toggling duty status.")

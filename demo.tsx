@@ -12,7 +12,7 @@ import MapView, { Marker } from 'react-native-maps';
 import firebase  from '@react-native-firebase/app'
 const { LocationModule } = NativeModules;
 
-console.log("firebase",firebase.apps)
+
 export default function App() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState('');

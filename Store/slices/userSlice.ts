@@ -73,7 +73,6 @@ const makeAuthenticatedRequest = async <T = any>(
     token: string,
     options: AxiosRequestConfig = {}
 ): Promise<T> => {
-    console.log("Making authenticated request with token:", token);
 
     if (!token) {
         throw new Error('No authentication token found');
@@ -113,7 +112,6 @@ export const fetchUserDetails = createAsyncThunk(
                 );
 
                 if (response.partner) {
-                    console.log("User details fetched successfully:", response.partner);
                     return response.partner;
                 }
 
@@ -148,7 +146,6 @@ export const getAllDetails = createAsyncThunk(
                 return rejectWithValue("No authentication token provided.");
             }
 
-            console.log("Fetching all details...");
 
             const response = await axios.get<AllDetailsResponse>(
                 `${API_URL_APP}rider/getMyAllDetails`,
@@ -163,7 +160,6 @@ export const getAllDetails = createAsyncThunk(
             // Also refresh user details
             dispatch(fetchUserDetails(authToken));
 
-            console.log("All details fetched successfully:", response.data);
             return response.data;
 
         } catch (err) {
@@ -178,8 +174,8 @@ export const getAllDetails = createAsyncThunk(
 export const toggleDutyStatus = createAsyncThunk(
     'user/toggleDutyStatus',
     async (
-        { token, userData, currentOnlineStatus }: 
-        { token: string; userData: Partner; currentOnlineStatus: boolean },
+        { token, userData, currentOnlineStatus }:
+            { token: string; userData: Partner; currentOnlineStatus: boolean },
         { rejectWithValue }
     ) => {
         if (!token) {
@@ -210,8 +206,7 @@ export const toggleDutyStatus = createAsyncThunk(
                 }
             );
 
-            console.log("Toggle duty status response:", response.data);
-
+        
             if (response.data.success) {
                 const newStatus = response.data.cabRider?.status === "online";
                 const timestamp = new Date().toISOString();
@@ -316,7 +311,6 @@ const userSlice = createSlice({
             .addCase(getAllDetails.fulfilled, (state, action) => {
                 state.loading.allDetails = false;
                 state.allUserData = action.payload;
-                console.log("Returning all user data from store:", action.payload);
             })
             .addCase(getAllDetails.rejected, (state, action) => {
                 state.loading.allDetails = false;
@@ -371,7 +365,6 @@ export const loadUserPersistedState = async (): Promise<Partial<UserState>> => {
             persistedState.allUserData = allUserData;
         }
 
-        console.log("📦 Loaded user persisted state:", persistedState);
         return persistedState;
     } catch (error) {
         console.error('❌ Failed to load user persisted state:', error);
@@ -387,7 +380,6 @@ export const saveUserPersistedState = async (state: UserState): Promise<void> =>
             saveData('userData', state.userData),
             saveData('allUserData', state.allUserData),
         ]);
-        console.log("💾 User state persisted successfully");
     } catch (error) {
         console.error('❌ Failed to persist user state:', error);
     }

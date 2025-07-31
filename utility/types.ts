@@ -27,3 +27,25 @@ export interface LoginState {
   isAuthenticated:boolean,
   error: any;
 }
+
+
+export interface IRide {
+  id: string;
+  pickup: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  dropoff: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  passengerName: string;
+  rideStatus: string;
+  fare: number;
+  distance: number;
+  vehicleType: string;
+  createdAt: string;
+  [key: string]: any; // extend as needed
+}

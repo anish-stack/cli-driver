@@ -37,16 +37,13 @@ export const initializePersistedState = async () => {
     
     // Load login persisted state
     const loginPersistedState = await loadPersistedState();
-    console.log("📦 Loaded login persisted state:", loginPersistedState);
     
     // Load user persisted state
     const userPersistedState = await loadUserPersistedState();
-    console.log("📦 Loaded user persisted state:", userPersistedState);
     
     // Restore login state
     if (Object.keys(loginPersistedState).length > 0) {
       store.dispatch(restorePersistedState(loginPersistedState));
-      console.log("✅ Login persisted state restored to Redux store.");
     } else {
       console.log("ℹ️ No login persisted state found.");
     }
